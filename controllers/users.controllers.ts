@@ -5,6 +5,7 @@ import dotenv from 'dotenv'
 import { isAuthUserMiddleware } from '../middlewares/isAuth.middleware'
 import { isAdminUserMiddleware } from '../middlewares/isAdmin.middleware'
 import { usersService } from '../services/users.service'
+import { isNotAuthUserMiddleware } from '../middlewares/isNotAuth.middleware'
 
 dotenv.config()
 
@@ -50,20 +51,56 @@ const controller = {
             })
         })
     },
-    changePassword(req:Request,res:Response){
-
+    async changePassword(req:Request,res:Response){
+        return usersService.changePassword(+req.params['id'],req.body)
+        .then(usuario=>{
+            return res.status(200).json({
+                success:true,
+                data:usuario
+            })
+        })
+        .catch((err:string)=>{
+            const [code,message] = err.split('|')
+            return res.status(+code).json({
+                message
+            })
+        })
     },
-    delete(req:Request,res:Response){
-
+    async delete(req:Request,res:Response){
+        return usersService.delete(+req.params['id'])
+        .then(usuario=>{
+            return res.status(200).json({
+                success:true,
+                data:usuario
+            })
+        })
+        .catch((err:string)=>{
+            const [code,message] = err.split('|')
+            return res.status(+code).json({
+                message
+            })
+        })
     },
-    checkAuth(req:Request,res:Response){
-
+    async checkAuth(req:Request,res:Response){
+        return usersService.checkout(req.params['id'])
+        .then(usuario=>{
+            return res.status(200).json({
+                success:true,
+                data:usuario
+            })
+        })
+        .catch((err:string)=>{
+            const [code,message] = err.split('|')
+            return res.status(+code).json({
+                message
+            })
+        })
     },
 }
 
 router.get('/check-auth',isAuthUserMiddleware,controller.checkAuth)
 router.post('/',isAuthUserMiddleware,isAdminUserMiddleware,controller.create)
-router.post('/login',controller.login)
+router.post('/login',isNotAuthUserMiddleware,controller.login)
 router.post('/logout',controller.logout)
 router.put('/change-password/:id',isAuthUserMiddleware,isAdminUserMiddleware,controller.changePassword)
 router.delete('/:id',isAuthUserMiddleware,isAdminUserMiddleware,controller.delete)

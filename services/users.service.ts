@@ -54,11 +54,39 @@ class UsersService {
         return {...user,password:undefined as any}        
     }
 
-    delete(){}
+    async delete(id: number){
+        const user = await userRepository.delete({id})
 
-    changePassword(){}
+        if(user.affected === 0){
+            throw new Error('404|No existe el usuario') 
+        }
+    
+        return {success:true}
+    }
 
-    checkout(){}
+    async changePassword(id:number,dto:{password:string}){
+        const password = bcrypt.hashSync(dto.password,15)
+
+        const user = await userRepository.preload({id,password})
+
+        if(!user){
+            throw new Error("404|No existe ese usuario");
+        }
+
+        await userRepository.save(user)
+
+        return {...user,password:undefined}
+    }
+
+    async checkout(signature:string){
+        const restOfToken = await this.redis.get(signature)
+
+        if(!restOfToken) throw new Error('400|No session')
+
+        const payload = jwt.decode(`${restOfToken}.${signature}`)
+
+        return payload
+    }
 
 }
 
