@@ -2,31 +2,44 @@ import {Request,Response,NextFunction} from 'express'
 import dotenv from 'dotenv'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { userRepository } from '../repositories/user.repository'
+import { AuthPayload } from '../interfaces/authPayload'
+import Redis from 'ioredis'
 dotenv.config()
 
 export const isAdminUserMiddleware = async (req:Request,res:Response,next:NextFunction) => {
 
-    const token: string = req.cookies['x-token']
+    const redis = new Redis(process.env.REDIS_URL!)
 
-    if(!token) return res.status(403).json({
+    const signature: string = req.cookies['x-token']
+
+    if(!signature) return res.status(403).json({
         message:'No token'
     })
 
-    const payload = jwt.decode(token) as JwtPayload | null
+    const restOfToken = await redis.get(signature)
 
-    if(payload && (payload as JwtPayload).id) {
-        const user = await userRepository.findOneBy({id:payload.id})
-        if(!user || !user.isAdmin){
-            return res.status(403).json({
-                message:'Token no valido'
-            })
-        }
-
-        next()
+    if(!restOfToken) {
+        return res.status(403).json({
+            message:'No tiene sesion'
+        }) 
     }
 
-    return res.status(403).json({
-        message:'Token no valido'
-    })
+    const payload = jwt.decode(`${restOfToken}.${signature}`) as AuthPayload | null
+
+    if(!payload) {
+
+        return res.status(403).json({
+            message:'Token no valido'
+        })        
+
+    }
+    if (payload && payload.isAdmin){
+        next()
+    }
+    else {
+        return res.status(403).json({
+            message:'Token no valido'
+        })        
+    }
 
 }
