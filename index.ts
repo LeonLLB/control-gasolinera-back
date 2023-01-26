@@ -8,7 +8,8 @@ import { AppDataSource } from './db'
 import ApiControllers from './controllers'
 
 const origins = [
-    'http://172.30.96.1:5173'
+    'http://172.30.96.1:5173',
+    'http://localhost:5173',
 ]
 
 const server = express()
