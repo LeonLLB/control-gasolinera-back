@@ -16,8 +16,8 @@ const controller = {
                     data:distribucion
                 })
             })
-            .catch((err:string)=>{
-                const [code,message] = err.split('|')
+            .catch((err:Error)=>{
+                const [code,message] = err.message.split('|')
                 return res.status(+code).json({
                     message
                 })
