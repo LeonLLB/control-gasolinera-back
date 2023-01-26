@@ -15,12 +15,13 @@ const origins = [
 const server = express()
 server.use(cors({
     origin:(origin,cb)=>{
-        console.log(origin)
+        // console.log(origin)
         if(!origin) return cb(null,true)
 
         if(origins.indexOf(origin)===-1){
             return cb(new Error('CORS no valido'),false)
         }
+        return cb(null,true)
     },
     credentials:true
 }))
