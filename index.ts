@@ -7,9 +7,21 @@ dotenv.config()
 import { AppDataSource } from './db'
 import ApiControllers from './controllers'
 
+const origins = [
+    'http://172.30.96.1:5173'
+]
+
 const server = express()
 server.use(cors({
-    origin:process.env.ORIGIN || '*'
+    origin:(origin,cb)=>{
+        console.log(origin)
+        if(!origin) return cb(null,true)
+
+        if(origins.indexOf(origin)===-1){
+            return cb(new Error('CORS no valido'),false)
+        }
+    },
+    credentials:true
 }))
 server.use(cookieParser())
 server.use(express.json())
