@@ -17,7 +17,7 @@ const controller = {
     async login(req:Request,res:Response){
         return usersService.login(req.body)
             .then(token=>{
-                res.cookie('x-token',token,{httpOnly:true,secure:true})
+                res.cookie('x-token',token,{httpOnly:true,secure:true,sameSite:'none'})
                 return res.status(200).json({
                     success:true
                 })
