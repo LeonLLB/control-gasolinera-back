@@ -82,7 +82,7 @@ const controller = {
         })
     },
     async checkAuth(req:Request,res:Response){
-        return usersService.checkout(req.params['id'])
+        return usersService.checkout(req.cookies['x-token'])
         .then(usuario=>{
             return res.status(200).json({
                 success:true,
