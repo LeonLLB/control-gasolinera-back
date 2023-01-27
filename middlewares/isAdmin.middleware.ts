@@ -34,7 +34,7 @@ export const isAdminUserMiddleware = async (req:Request,res:Response,next:NextFu
 
     }
     if (payload && payload.isAdmin){
-        next()
+        return next()
     }
     else {
         return res.status(403).json({

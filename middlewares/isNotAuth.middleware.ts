@@ -13,7 +13,7 @@ export const isNotAuthUserMiddleware = async (req:Request,res:Response,next:Next
     const restOfToken = await redis.get(signature)
 
     if(!restOfToken) {
-        next()
+        return next()
     }
 
     try {
@@ -22,6 +22,6 @@ export const isNotAuthUserMiddleware = async (req:Request,res:Response,next:Next
             message:'Usuario tiene sesion activa'
         })
     } catch (error) {
-        next()
+        return next()
     }
 }

@@ -14,7 +14,7 @@ export const obtuvoLitrajeMiddleware = async (req:Request,res:Response,next:Next
         const diferencia = (fechaActual.getTime() - ultimaFecha.getTime()) / 1000 / 60 / 60 / 24
         
         if(diferencia >= 0.8){
-            next()
+            return next()
         } else {
             return res.status(403).send({
                 message:`Cliente obtuvo litraje hace ${(diferencia*24).toFixed(0)} horas`
@@ -22,7 +22,7 @@ export const obtuvoLitrajeMiddleware = async (req:Request,res:Response,next:Next
         }
         
     } else {
-        next()
+        return next()
     } 
 
     

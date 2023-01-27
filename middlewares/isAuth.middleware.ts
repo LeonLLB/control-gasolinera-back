@@ -37,5 +37,5 @@ export const isAuthUserMiddleware = async (req:Request,res:Response,next:NextFun
             message:error
         })
     }
-    next()
+    return next()
 }
