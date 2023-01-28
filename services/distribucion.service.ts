@@ -3,6 +3,7 @@ import { RegistrarDistribucionDto } from "../dto/distribucion/registrar.dto";
 import { Cliente } from "../entities/cliente.entity";
 import { Distribucion } from "../entities/distribucion.entity";
 import { distribucionRepository } from "../repositories/distribucion.repository";
+import { dateService } from "./date.service";
 
 
 class DistribucionService {
@@ -22,12 +23,17 @@ class DistribucionService {
         await queryRunner.startTransaction()
 
         try {
-            //CREAR O ACTUALIZAR EL CLIENTE
-            const cliente = (dto.cliente.id)
-            ? await queryRunner.manager.preload(Cliente,{...dto.cliente})
+            //CREAR O CONSULTAR EL CLIENTE
+            const cliente: Cliente = (dto.cliente.id)
+            ? await queryRunner.manager.findOneBy(Cliente,{id:dto.cliente.id}) as Cliente
             : queryRunner.manager.create(Cliente,{...dto.cliente})
 
-            const distribucion = queryRunner.manager.create(Distribucion,{...dto,cliente})
+            const distribucion = queryRunner.manager.create(Distribucion,{
+                ...dto,
+                cliente,
+                fechaCreacion: await dateService.getVenezuelanDate()}
+            )
+
             await queryRunner.manager.save(Distribucion,distribucion)
             
             await queryRunner.commitTransaction()

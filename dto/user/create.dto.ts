@@ -6,4 +6,6 @@ export class CreateUserDto{
     password!: string
 
     isAdmin = false
+
+    usuario!:string
 }

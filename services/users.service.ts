@@ -30,6 +30,10 @@ class UsersService {
         return signature
     }
 
+    getAll():Promise<Usuario[]>{
+        return userRepository.find()
+    }
+
     async create(dto: CreateUserDto):Promise<Usuario>{
         if(
             !dto.cedula || isNaN(dto.cedula) ||

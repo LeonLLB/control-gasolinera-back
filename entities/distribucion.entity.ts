@@ -15,8 +15,8 @@ export class Distribucion{
     @Column('numeric')
     litraje!: number
 
-    @CreateDateColumn()
-    createdAt!: Date
+    @Column('timestamp')
+    fechaCreacion!: Date
 
     @ManyToOne(()=>Cliente,(cliente)=>cliente.distribuciones,{eager:true,cascade:true,onDelete:'CASCADE'})
     cliente!: Cliente

@@ -9,6 +9,9 @@ export class Usuario{
     cedula!: number
 
     @Column('text')
+    usuario!: string
+
+    @Column('text')
     password!: string
 
     @Column('bool',{default:false})

@@ -23,6 +23,6 @@ const controller = {
     }
 }
 
-router.get('/:id',isAuthUserMiddleware,controller.getOne)
+router.get('/:cliente',isAuthUserMiddleware,controller.getOne)
 
 export default router
