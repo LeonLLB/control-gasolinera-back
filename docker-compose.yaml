@@ -1,0 +1,21 @@
+version: '3'
+
+
+services:
+  primarydb:
+    image: postgres:14.5
+    restart: "always"
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    container_name: cgw_primarydb
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+  authdb:
+    image: redis:7.0.4
+    restart: always
+    ports:
+      - "6379:6379"
+    container_name: cgw_authdb

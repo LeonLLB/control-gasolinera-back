@@ -1,18 +1,10 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Cliente } from "./cliente.entity";
 
 @Entity({name:'distribuciones'})
 export class Distribucion{
     @PrimaryGeneratedColumn()
     id!: number
-
-    @Column('text')
-    nombre!: string
-
-    @Column('text')
-    apellido!: string
-
-    @Column('int8')
-    cedula!: number
 
     @Column('varchar',{length:8})
     placa!: string
@@ -25,4 +17,7 @@ export class Distribucion{
 
     @CreateDateColumn()
     createdAt!: Date
+
+    @ManyToOne(()=>Cliente,(cliente)=>cliente.distribuciones,{eager:true,cascade:true,onDelete:'CASCADE'})
+    cliente!: Cliente
 }
