@@ -30,21 +30,26 @@ class UsersService {
         return signature
     }
 
-    getAll():Promise<Usuario[]>{
-        return userRepository.find()
+    async getAll():Promise<Usuario[]>{
+        const usuarios = await userRepository.find()
+
+        return usuarios.map(usuario=>({...usuario,password:''}))
     }
 
     async create(dto: CreateUserDto):Promise<Usuario>{
         if(
             !dto.cedula || isNaN(dto.cedula) ||
-            !dto.password
+            !dto.password || !dto.usuario
         ) {
             throw new Error('400|Datos no validos')
         }
 
         const password = bcrypt.hashSync(dto.password,15)
 
-        const user = userRepository.create({cedula:dto.cedula,password,isAdmin:dto.isAdmin})
+        const user = userRepository.create({
+            ...dto,
+            password,
+        })
         
         try {
             await userRepository.save(user)        
