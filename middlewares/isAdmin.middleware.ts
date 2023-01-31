@@ -10,21 +10,21 @@ export const isAdminUserMiddleware = async (req:Request,res:Response,next:NextFu
 
     const redis = new Redis(process.env.REDIS_URL!)
 
-    const signature: string = req.cookies['x-token']
+    const authUserId: string = req.cookies['token-id']
 
-    if(!signature) return res.status(403).json({
+    if(!authUserId) return res.status(403).json({
         message:'No token'
     })
 
-    const restOfToken = await redis.get(signature)
+    const authUserToken = await redis.get(authUserId)
 
-    if(!restOfToken) {
+    if(!authUserToken) {
         return res.status(403).json({
             message:'No tiene sesion'
         }) 
     }
 
-    const payload = jwt.decode(`${restOfToken}.${signature}`) as AuthPayload | null
+    const payload = jwt.decode(authUserToken) as AuthPayload | null
 
     if(!payload) {
 

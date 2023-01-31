@@ -10,29 +10,29 @@ export const isAuthUserMiddleware = async (req:Request,res:Response,next:NextFun
 
     const redis = new Redis(process.env.REDIS_URL!)
 
-    const signature: string = req.cookies['x-token']
+    const authUserId: string = req.cookies['token-id']
 
-    if(!signature) return res.status(403).json({
+    if(!authUserId) return res.status(403).json({
         message:'No token'
     })
 
-    const restOfToken = await redis.get(signature)
+    const authUserToken = await redis.get(authUserId)
 
-    if(!restOfToken) {
+    if(!authUserToken) {
         return res.status(403).json({
             message:'No tiene sesion'
         }) 
     }
 
     try {
-        const data:AuthPayload = jwt.verify(`${restOfToken}.${signature}`,process.env.JWT_KEY!) as AuthPayload
+        const data:AuthPayload = jwt.verify(authUserToken,process.env.JWT_KEY!+authUserId) as AuthPayload
 
         const userExist = await userRepository.exist({where:{id:data.id}})
 
         if(!userExist) throw new Error("Usuario no existe");        
 
     } catch (error) {
-        await redis.del(signature)
+        await redis.del(authUserId)
         return res.status(403).json({
             message:error
         })

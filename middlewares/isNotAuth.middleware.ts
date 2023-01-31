@@ -8,20 +8,21 @@ export const isNotAuthUserMiddleware = async (req:Request,res:Response,next:Next
 
     const redis = new Redis(process.env.REDIS_URL!)
 
-    const signature: string = req.cookies['x-token']
+    const authUserId: string = req.cookies['token-id']
 
-    const restOfToken = await redis.get(signature)
+    const dataToken = await redis.get(authUserId)
 
-    if(!restOfToken) {
+    if(!dataToken) {
         return next()
     }
 
     try {
-        jwt.verify(`${restOfToken}.${signature}`,process.env.JWT_KEY!)
+        jwt.verify(dataToken,process.env.JWT_KEY!+authUserId)
         return res.status(403).json({
             message:'Usuario tiene sesion activa'
         })
     } catch (error) {
+        await redis.del(authUserId)
         return next()
     }
 }

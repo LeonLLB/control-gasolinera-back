@@ -16,7 +16,7 @@ const controller = {
     async login(req:Request,res:Response){
         return usersService.login(req.body)
             .then(token=>{
-                res.cookie('x-token',token,{httpOnly:true,secure:true,sameSite:'none'})
+                res.cookie('token-id',token,{httpOnly:true,secure:true,sameSite:'none'})
                 return res.status(200).json({
                     success:true
                 })
@@ -38,8 +38,8 @@ const controller = {
         })
     },
     async logout(req:Request,res:Response){
-        await redis.del(req.cookies['x-token'])
-        res.cookie('x-token','',{httpOnly:true,secure:true})
+        await redis.del(req.cookies['token-id'])
+        res.cookie('token-id','',{httpOnly:true,secure:true})
         return res.status(200).json({
             success:true
         })

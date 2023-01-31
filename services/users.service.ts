@@ -24,10 +24,13 @@ class UsersService {
 
         if(!isPasswordValid) throw new Error('400|Cedula o clave invalida')
 
-        const [header,body,signature] = jwt.sign({...user,password:undefined},process.env.JWT_KEY!,{expiresIn:'5h'}).split('.')
-        this.redis.set(signature,`${header}.${body}`)
+        const authToken = jwt.sign({id:user.id},process.env.JWT_KEY!,{expiresIn:'5h'})
+        const userToken = jwt.sign({...user,password:undefined},process.env.JWT_KEY!+authToken,{expiresIn:'5h'})
+        
+        
+        this.redis.set(authToken,userToken)
 
-        return signature
+        return authToken
     }
 
     async getAll():Promise<Usuario[]>{
