@@ -81,8 +81,13 @@ class UsersService {
         if(!user){
             throw new Error("404|No existe ese usuario");
         }
-
-        await userRepository.save(user)
+        
+        try {
+            await userRepository.save(user)            
+        } catch (error) {
+            console.error(error)
+            throw new Error("500|No se pudo cambiar la clave")
+        }
 
         return {...user,password:undefined}
     }
