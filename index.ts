@@ -10,6 +10,7 @@ import ApiControllers from './controllers'
 const origins = [
     'http://172.30.96.1:5173',
     'http://localhost:5173',
+    'https://control-gasolinera.vercel.app'
 ]
 
 const server = express()
