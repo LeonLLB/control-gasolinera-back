@@ -76,10 +76,9 @@ const controller = {
     },
     async delete(req:Request,res:Response){
         return usersService.delete(+req.params['id'])
-        .then(usuario=>{
+        .then(()=>{
             return res.status(200).json({
                 success:true,
-                data:usuario
             })
         })
         .catch((err:Error)=>{
